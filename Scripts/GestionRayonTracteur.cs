@@ -37,8 +37,8 @@ public class GestionRayonTracteur : MonoBehaviour
     private void OnDisable()
     {
         // s'exécute lorsque le script devient inactif (disable)
-        // ajout de la fonction qui sera appelée lorsque l'action sera effectuée
-        inputActionReference_ActiveGrip.action.performed -= DesactiveRayon;
+        // retire la fonction qui sera appelée lorsque l'action sera effectuée
+        inputActionReference_ActiveGrip.action.performed -= ActiveRayon;
     }
 
     private void Start()
