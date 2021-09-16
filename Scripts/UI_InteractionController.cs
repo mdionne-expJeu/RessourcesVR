@@ -5,85 +5,86 @@ using UnityEngine.XR.Interaction.Toolkit;
 using UnityEngine.InputSystem;
 using UnityEngine.Events;
 using System;
-
+/*
+ * Description générale
+ * Script simple qui permet de gérer deux contrôleurs sur une même main. Un contrôleur de base et un controleur pour les UI.
+ * Mathieu Dionne
+ * Dernière modifications : 16 septembre 2021
+ */
 public class UI_InteractionController : MonoBehaviour
 {
+    // Le controleur pour les UI
     [SerializeField]
-    GameObject UIController;
-
+    GameObject UIControleur;
+    // Le controleur de base
     [SerializeField]
-    GameObject BaseController;
+    GameObject BaseControleur;
 
+    // L'action qui déclence le switch de controleur
     [SerializeField]
-    InputActionReference inputActionReference_UISwitcher;
+    InputActionReference inputActionSwitch;
 
-    bool isUICanvasActive = false;
+    // Permet de savoir le canvas est actif ou non
+    bool canvasActif = false;
 
+    // Le canvas
     [SerializeField]
-    GameObject UICanvasGameobject;
+    GameObject leCanvas;
 
   
+    // À l'activation du script, ajout de la fonction ActiveControleurUI lorsque l'action est faite
     private void OnEnable()
     {
-        inputActionReference_UISwitcher.action.performed += ActivateUIMode;
-        print("enable");
+        inputActionSwitch.action.performed += ActiveControleurUI;
     }
+
+    // À la désactivation du script, on retire la fonction ActiveControleurUI lorsque l'action est faite
     private void OnDisable()
     {
-        inputActionReference_UISwitcher.action.performed -= ActivateUIMode;
-        print("disable");
+        inputActionSwitch.action.performed -= ActiveControleurUI;
     }
 
     private void Start()
     {
-        //Deactivating UI Canvas Gameobject by default
-        if (UICanvasGameobject !=null)
+        //Désactivation du canvas au départ
+        if (leCanvas !=null)
         {
-            UICanvasGameobject.SetActive(false);
-
+            leCanvas.SetActive(false);
         }
 
-        //Deactivating UI Controller by default
-        UIController.GetComponent<XRRayInteractor>().enabled = false;
-        UIController.GetComponent<XRInteractorLineVisual>().enabled = false;
+        //Désactivation des components du controleur UI
+        UIControleur.GetComponent<XRRayInteractor>().enabled = false;
+        UIControleur.GetComponent<XRInteractorLineVisual>().enabled = false;
     }
 
-    /// <summary>
-    /// This method is called when the player presses UI Switcher Button which is the input action defined in Default Input Actions.
-    /// When it is called, UI interaction mode is switched on and off according to the previous state of the UI Canvas.
-    /// </summary>
-    /// <param name="obj"></param>
-    private void ActivateUIMode(InputAction.CallbackContext obj)
+    // Lorsque l'action associée au controlleur UI est faite par le joueur (bouton par exemple)
+    private void ActiveControleurUI(InputAction.CallbackContext obj)
     {
-        if (!isUICanvasActive)
+        // Si canvas inactif, on l'active ainsi que les composants du controleur de UI.
+        // On désactive le composant du controleur de base
+        if (!canvasActif)
         {
-            isUICanvasActive = true;
+            canvasActif = true;
 
-            //Activating UI Controller by enabling its XR Ray Interactor and XR Interactor Line Visual
-            UIController.GetComponent<XRRayInteractor>().enabled = true;
-            UIController.GetComponent<XRInteractorLineVisual>().enabled = true;
+            UIControleur.GetComponent<XRRayInteractor>().enabled = true;
+            UIControleur.GetComponent<XRInteractorLineVisual>().enabled = true;
 
-            //Deactivating Base Controller by disabling its XR Direct Interactor
-            BaseController.GetComponent<XRDirectInteractor>().enabled = false;
+            BaseControleur.GetComponent<XRDirectInteractor>().enabled = false;
 
-          
-
-            //Activating the UI Canvas Gameobject
-            UICanvasGameobject.SetActive(true);
+            leCanvas.SetActive(true);
         }
         else
+        // Si canvas actif, on le désactive ainsi que les composants du controleur de UI.
+        // On active le composant du controleur de base
         {
-            isUICanvasActive = false;
+            canvasActif = false;
 
-            //De-Activating UI Controller by enabling its XR Ray Interactor and XR Interactor Line Visual
-            UIController.GetComponent<XRRayInteractor>().enabled = false;
-            UIController.GetComponent<XRInteractorLineVisual>().enabled = false;
+            UIControleur.GetComponent<XRRayInteractor>().enabled = false;
+            UIControleur.GetComponent<XRInteractorLineVisual>().enabled = false;
 
-            //Activating Base Controller by disabling its XR Direct Interactor
-            BaseController.GetComponent<XRDirectInteractor>().enabled = true;
+            BaseControleur.GetComponent<XRDirectInteractor>().enabled = true;
 
-            //De-Activating the UI Canvas Gameobject
-            UICanvasGameobject.SetActive(false);
+            leCanvas.SetActive(false);
         }
 
     }
